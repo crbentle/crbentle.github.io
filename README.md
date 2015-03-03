@@ -1,2 +1,2 @@
 # mamamaisha
-Repository for web hosting
+Repository for web hosting.
