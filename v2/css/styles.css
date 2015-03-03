@@ -1,0 +1,204 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+	background-color: #F9781C;	
+}
+
+#header {
+	max-width: 70%;
+	min-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	height: 50px;
+	position: relative;
+}
+
+.logo{	
+	font-family: 'Droid Serif', serif;
+	display: inline;
+	float: left;
+	color: #fff;
+	margin: 0px 15px 0px 5px;
+}
+
+.nav-strip {
+	float: left;
+	height: 100%;
+}
+.nav {
+	height: 70%;
+	padding: 0px 0px 0px 10px;
+	list-style: none;
+}
+
+.navigation {
+	float: left;
+	position: absolute;
+	bottom: 0;
+	z-index: 100;
+}
+
+.nav > li {
+	float: left;
+	display: block;
+	position: relative;
+}
+
+.menu-heading {
+	background: #ff9933;
+	color: #fff;
+	display: block;
+	padding: 10px 20px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-right: -1px;
+	/*border-right: solid 1px black;*/
+	-ms-transform: skew(-20deg); /* IE 9 */
+    -webkit-transform: skew(-20deg); /* Chrome, Safari, Opera */
+    transform: skew(-20deg);
+}
+.menu-heading-text {
+	display: block;
+	-ms-transform: skew(20deg); /* IE 9 */
+    -webkit-transform: skew(20deg); /* Chrome, Safari, Opera */
+    transform: skew(20deg);	
+}
+.menu-heading:hover {
+	color: #ff6633;
+	background-color: #ffffcc;
+}
+
+.hover {
+	color: #ff6633;
+	background-color: #ffffcc;	
+}
+
+.subheading {
+	display: none;
+	position: absolute;
+	list-style: none;
+	padding: 0px;
+	min-width: 120%;
+	left: -10%;
+	border-radius: 5px;
+	box-shadow: 0px 10px 10px 0px #333;
+	background-color: #ffffcc;	
+}
+
+.donate, .donate:hover {
+	background-color: #906;	
+	padding-left: 30px;
+	color: #fff;
+}
+
+.subheading > li {
+	padding: 15px 25px 0px 25px;
+	display: block;
+}
+
+.subheading a {
+	white-space: nowrap;	
+}
+
+.subheading > li > a {
+	display: block;
+	color: #ff6633;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding-bottom: 20px;
+}
+
+.subheading a:hover {
+	text-decoration: underline;
+}
+
+
+#main-content {
+	background-color: #ffffcc;
+	max-width: 1600px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+    overflow: hidden;
+/*	background-color: #ffffcc;
+	max-width: 1600px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	height: 600px;
+	position: relative;
+    overflow: hidden;*/
+}
+#hero {
+	max-width: 600px;	
+	margin-left: auto;
+	margin-right: auto;
+}
+.fadein {
+	position: relative;	
+	height: 100%;
+}
+.fade-prev, .fade-next {
+	background-color: white;
+	z-index: 50;
+	top: 30%;
+	position: relative;
+	padding: 20px 10px 20px 10px;
+	cursor: pointer;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+.fade-prev{
+	float: left;
+}
+.fade-next{
+	float: right;
+}
+
+.fadein > .slide {
+	position: absolute;
+	width: 100%;
+	height: auto;
+}
+
+#pager {
+	position: absolute;
+	background-color: #ffffcc;
+	z-index: 999;
+	bottom: 20px;
+	left: 45%;
+	opacity: .8;
+}
+
+#pager > a {
+	margin: 5px;
+	cursor: pointer;
+}
+
+#pager > a.active {
+	color: #ff9933;
+}
+
+.fade-text {
+	position: absolute;
+	background-color: white;
+	padding: 25px;
+	opacity: .8;
+}
+
+/*
+img {
+	width: 100%;
+	height: auto;
+	max-width: 1600px;
+	display: block;
+}
+*/
+

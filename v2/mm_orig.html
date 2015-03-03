@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+<link href="css/styles.css" rel="stylesheet" type="text/css" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function() {
+       $(window).resize(function() {
+          var bodywidth = $(window).width();
+		  $(".fadein img").width(bodywidth);
+       }); 
+	   $(".fadein > .slide").click(function(){
+		   //$slideDirection *= -1;
+		   clearInterval($intervalId);
+		   nextImage();
+		   //clearInterval($intervalId);
+	   });
+	   
+	/* Next part of code handles hovering effect and submenu appearing */
+    $('.nav li').hover(
+      function () { //appearing on hover
+	  $('> a', this).toggleClass('hover');
+	    $('ul', this).stop(true);
+        $('ul', this).slideToggle();
+      },
+      function () { //disappearing on hover
+	  $('> a', this).toggleClass('hover');
+		$('ul', this).stop(true);
+        $('ul', this).slideToggle();
+      }
+    );
+	
+	$('.fade-prev').click(
+		function () {
+		   clearInterval($intervalId);
+			$slideDirection = -1;
+			nextImage();
+		});
+		
+	$('.fade-next').click(
+		function () {
+		   clearInterval($intervalId);
+			$slideDirection = 1;
+			nextImage();
+		});
+		
+		$( ".fadein .slide" ).each(function( index ) {
+			var page = document.createElement('a');
+			page.appendChild( document.createTextNode( index + 1 ) );
+			$("#pager").append( page );
+		});
+		
+		$("#pager > a").click( function() {
+		   clearInterval($intervalId);
+			showImage( parseInt( $( this ).text() ) - 1);
+			$("#pager > a").removeClass("active");
+			$(this).addClass("active");
+		});
+	
+    });
+	
+</script>
+</head>
+
+<body>
+
+<div id="header">
+      <h1 class="logo">Mama Maisha
+      <!--<p class="subheading"><em>"Mother Life" in Swahili</em></p>-->
+      </h1>
+    <!--<hr class="header-divider">-->
+    <div class="nav-strip">
+    <!-- Use this navigation div as your menu bar div -->
+  	<div class="navigation">
+  		<ul class="nav">
+  			<li>
+  				<a class="menu-heading" href="./"><span class="menu-heading-text">Our Story</span></a>
+  				<ul class="subheading">
+  					<li>
+                    	<a href="#">History</a>
+                    	<a href="#">Our People</a>
+                        <a href="#">Partners</a>
+                    </li>
+                </ul>
+  			</li>
+  			<li>
+  				<a class="menu-heading" href="donate.html"><span class="menu-heading-text">Our Project</span></a>
+  				<ul class="subheading">
+  					<li>
+                    	<a href="#">What we do</a>
+                    	<a href="#">Where we work</a>
+                        <a href="#">MHAs</a>
+                    </li>
+                </ul>
+  			</li>
+  			<li>
+  				<a class="menu-heading" href="#"><span class="menu-heading-text">Get Involved</span></a>
+  				<ul class="subheading">
+  					<li>
+                    	<a href="#">Donate</a>
+                    </li>
+                </ul>
+  			</li>
+  			<li>
+  				<a class="menu-heading donate" href="donate.html"><span class="menu-heading-text">Donate</span></a>
+  				<ul class="subheading">
+  					<li>
+<form id="donation-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  <input type="hidden" name="cmd" value="_donations">
+  <input type="hidden" name="upload" value="1">
+  <input type="hidden" name="business" value="jambo@villagelifeoutreach.org">
+  <input type="hidden" name="page_style" value="VLOP_NEW">
+  <input type="hidden" name="return" value="http://71.81.199.70:8080/donate_thanks.html">
+  <input type="hidden" name="rm" value="1">
+  <input type="hidden" name="cbt" value="Return to Mama Miasha">
+  <input type="hidden" name="cancel_return" value="http://71.81.199.70:8080/donate.html">
+  <input type="hidden" name="item_name" value="Mama Miasha">
+  <input type="hidden" name="no_shipping" value="1" />
+  <input type="hidden" name="no_note" value="0" />
+  <label for="amount">$</label><input type="text" id="amount" name="amount"/>
+  <input name="donate" type="submit" id="Checkout" value="Donate Now">
+</form>
+                    </li>
+                </ul>
+  			</li>
+  		</ul>
+  	</div>
+    <!--/.navigation-->
+    </div>
+    <!--/.nav-strip-->
+</div>
+<!--/.header-->
+
+<div id="main-content">
+<div class="fadein">
+	<div id="pager"></div>
+	<p class="fade-prev">&lt;</p>
+    <p class="fade-next">&gt;</p>
+	<div class="slide">
+    <p class="fade-text">1.</p>
+	<img src="img/IMG_0703_background_1600x600.jpg" width="1600" height="600" />
+	</div>
+	<div class="slide">
+    <p class="fade-text">2.</p>
+	<img src="img/IMG_6644_5_6_7_2_3_tonemapped_1600x600.jpg" width="1600" height="600" />
+	</div>
+	<div class="slide">
+    <p class="fade-text">3.</p>
+	<img src="img/IMG_0633_1600x600.jpg" width="1600" height="600" />
+	</div>
+</div>
+</div>
+
+<script>
+$(function(){
+	$slideDirection = 1;
+    $ds = $('.fadein .slide');
+    $ds.hide().eq(0).show().addClass('active');
+    $intervalId = setInterval(nextImage, 5000);	
+});
+
+var nextImage = function( index ){
+	$ds.stop(true, true);
+	 	//clearInterval($intervalId);	
+        var $target = $ds.filter('.active');
+		var $other = null;
+		 
+		 if ( $target.length > 0 )
+		 {
+			 var $div = $target.eq(0);
+			$div.removeClass('active').animate({
+                    left: $slideDirection * -$div.width()
+            }, 750);
+			$div.hide(750);
+			
+			if ( $slideDirection > 0 )
+			{
+				$other = $div.next('div');
+			}
+			else
+			{
+				$other = $div.prev('div');	
+			}
+		 }
+		 
+		 if( typeof index != "undefined" ) {
+			 $other = $ds.eq( index );
+		 }
+		 
+		 if( $other == null || $other.length == 0 )
+		 {
+			if ( $slideDirection > 0 )
+			{
+				$other = $ds.eq(0); 
+			}
+			else
+			{
+				$other =$ds.eq( $ds.length -1 );	
+			}
+		 }
+
+		 $other.addClass('active').show().css({
+                left: ($slideDirection * $other.width())
+            }).animate({
+                left: 0
+            }, 750);
+				
+}
+
+var showImage = function( index ){
+	var currentSlide;
+	$ds.each( function( index ) {
+		if( $(this).hasClass("active") ){
+			currentSlide = index;
+			return false;
+		}
+	});
+	
+	//alert("current: " + currentSlide +"\nnext: " + index);
+	
+	if( currentSlide < index ) {
+		$slideDirection = 1;
+		for (var i = currentSlide + 1; i <= index; i++) {
+			nextImage( i );
+		}
+		return;
+	}
+	
+	if( currentSlide > index ) {
+		$slideDirection = -1;
+		for (var i = currentSlide - 1; i >= index; i--) {
+			nextImage( i );
+		}
+		return;
+	}
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+	background-color: #5391aa;	
+}
+
+#header {
+	max-width: 70%;
+	min-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+}
+
+.logo{	
+	font-family: 'Droid Serif', serif;
+	float: left;
+	color: #fff;
+	margin: 0px 15px 0px 5px;
+}
+
+.navigation {
+	float: left;
+	z-index: 100;
+}
+
+.nav {
+	padding: 0px 0px 0px 10px;
+	list-style: none;
+	/*Change margin to move nav up or down*/
+	margin: 5px;
+}
+
+.nav > li {
+	float: left;
+	/*Remove relative to expand menu body to full width*/
+	position: relative;
+}
+
+.menu-heading {
+	background: #5391ee;
+	color: #fff;
+	display: block;
+	padding: 10px 20px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-right: -1px;
+	/*border-right: solid 1px black;*/
+	-ms-transform: skew(-20deg); /* IE 9 */
+    -webkit-transform: skew(-20deg); /* Chrome, Safari, Opera */
+    transform: skew(-20deg);
+}
+.menu-heading-text {
+	display: block;
+	-ms-transform: skew(20deg); /* IE 9 */
+    -webkit-transform: skew(20deg); /* Chrome, Safari, Opera */
+    transform: skew(20deg);	
+}
+
+.hover {
+	color: #5391ee;
+	background-color: #ffffcc;	
+}
+
+.subheading {
+	z-index: 1000;
+	display: none;
+	list-style: none;
+	padding: 0px;	
+	position: absolute;
+	min-width: 100%;
+	left: -7px;
+	box-shadow: 0px 10px 10px 0px #333;
+	background-color: #ffffcc;	
+}
+
+.subheading > li {
+	padding: 15px 25px 0px 25px;
+}
+
+.subheading > li > a {
+	display: block;
+	color: #000;/*#5391ee;*/
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding-bottom: 15px;
+	white-space: nowrap;
+}
+
+.subheading a:hover {
+	text-decoration: underline;
+}
+
+.menu-heading.donate {
+	padding-left: 35px;
+	background-color: #906;
+	color: #fff;
+}
+
+#quick-donate {
+	background-color: #906;
+	color: #fff;
+}
+
+#quick-donate {
+	padding: 10px 10px;
+	display: inline-block;
+	margin-bottom: 15px;
+}
+
+#quick-donate > span {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	padding-bottom: 5px;
+	display: block;
+}
+
+#quick-donate input[type=submit] {
+	background:#fff;
+	color: #906;
+	font-weight: 700;
+	border: 0;
+	padding: 2px 6px;
+	cursor:pointer;
+}
+
+#quick-donate input[type=text] {
+	background: #FCC;
+	color: #906;
+	font-weight: 700;
+	border: 2px #fff solid;
+	padding: 0px 6px;
+}
+
+
