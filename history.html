@@ -31,38 +31,6 @@ $(document).ready(function(){
       }
     );
 	
-	//select the "Other amount" radio when the other amount text box is focused
-	$("input:text[id='other-text']").focus(function(){
-    	$("input:radio[value='other']").prop("checked", true);
-  	});
-
-	//When a .donate-form is submitted
-	$(".donate-form").submit(function( event ) {
-		//If the "other" option is checked move the value of other-text into "other"
-		if($(this).find('#other').prop('checked')){
-			$(this).find('#other').val(	$(this).find('#other-text').val() );
-		}
-		
-		// Get the donate amount. The main donate form with use a radio button
-		// Quick-donate will use a text input
-		var amount = $(this).find('input[name="amount"]:checked').val();
-		if( $(this).attr('id') == 'quick-donate-form' ){
-			amount = $(this).find('input[name="amount"]').val()
-		}
-
-		//If the "amount" value is a number disable the "other-text" input and submit the form
-		//Disabling "other-text" prevents multiple "amount" values from being submitted
-		if($.isNumeric( amount ) ){
-			$(this).find('#other-text').prop('disabled', true);
-		}
-		//If the "amount" is not a number do not submit the form
-		//TODO: Display a message when the amount is not valid
-		else {
-			//$('input[id=other-text]', '#donation-form').css({'background-color' : '#F00'});
-		  event.preventDefault();
-		}
-	});
-	
 });
 </script>
 </head>
@@ -143,43 +111,13 @@ $(document).ready(function(){
 
 <div id="main-content">
 	<div class="center-column">
-		<h1 class="pageTitle">DONATE</h1>
-		<p>Mama Maisha is partnered with <a class="link" href="http://www.villagelifeoutreach.org/">Village Life Outreach Project</a> to make donating quick and easy using PayPal or a credit card.
-		<br />
-		Village Life Outreach Project is a nonprofit 501(c)(3) organization. (EIN/tax ID number: 20-1582097)</p>
+		<h1 class="pageTitle">HISTORY</h1>
+		<p><strong>Every two minutes a woman dies from a pregnancy-related complication, yet over 98% of these deaths are preventable.</strong></p>
+        <p>Delivering reproductive and child services amid limited resource circumstances can be difficult. When access to care is a challenge due to geography, finances or gender issues, it is imperative to prioritize health interventions by focusing on what evidence supports as realistic and sustainable. <strong>Mama Maisha</strong> was created in response to this need.  We work at the village level, where women are often unable to obtain even the most basic prenatal care, either because it is unavailable or because they do not have a way to get to the services.
+</p>
+<p>Recent estimates by the World Health Organization place Tanzania in with other countries that have the highest number of maternal deaths worldwide, and these numbers are unlikely to change in the near future. <strong>Mama Maisha</strong> is on the ground, empowering women with education and support during pregnancy, postpartum and through the reproductive years. We are a demand-side intervention to decrease the number of women that die from pregnancy related complications, the overwhelming number of which are completely preventable.</p>
 
-		<div class="donate-form-box-header">
-			Make a donation
-		</div>
-		<div class="donate-form-box">
-			<p><strong>Help us by giving a tax-deductible gift today.</strong></p>
-			<br />
-<form id="donation-form" class="donate-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-  <input type="hidden" name="cmd" value="_donations">
-  <input type="hidden" name="upload" value="1">
-  <input type="hidden" name="business" value="jambo@villagelifeoutreach.org">
-  <input type="hidden" name="page_style" value="VLOP_NEW">
-  <input type="hidden" name="return" value="http://71.81.199.70:8080/donate_thanks.html">
-  <input type="hidden" name="rm" value="1">
-  <input type="hidden" name="cbt" value="Return to Mama Miasha">
-  <input type="hidden" name="cancel_return" value="http://71.81.199.70:8080/donate.html">
-  <input type="hidden" name="item_name" value="Mama Miasha">
-  <input type="hidden" name="no_shipping" value="1">
-  <input type="hidden" name="no_note" value="0">
-  <input type="radio" id="five" name="amount" value="5"><label for="five">$5</label>
-  <input type="radio" id="ten" name="amount" value="10"><label for="ten">$10</label>
-  <input type="radio" id="25" name="amount" value="25"><label for="25">$25</label>
-  <input type="radio" id="50" name="amount" value="50"><label for="50">$50</label>
-  <input type="radio" id="other" name="amount" value="other"><label for="other">Other amount</label>
-  <input type="text" id="other-text" name="amount" placeholder="$" size="5">
-  <br />
-  <br />
-  <div class="center-column">
-  <input name="donate" type="submit" id="checkout" value="Continue">
-  </div>
-</form>
-		</div>
-        <!--/.donate-form-box-->
+
 	</div>
     <!--/.center-column-->
 </div>
