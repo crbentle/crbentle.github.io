@@ -29,51 +29,44 @@ $(document).ready(function(){
 
 <body>
 <div id="header">
-      <h1 class="logo">Mama Maisha
+      <a href="./"><h1 class="logo">Mama Maisha
       <!--<p class="subheading"><em>"Mother Life" in Swahili</em></p>-->
       </h1>
+      </a>
     <!--<hr class="header-divider">-->
     <!-- Use this navigation div as your menu bar div -->
   	<div class="navigation">
   		<ul class="nav">
   			<li>
-  				<a class="menu-heading" href="./"><span class="menu-heading-text">Our Story</span></a>
+  				<a class="menu-heading" href="#"><span class="menu-heading-text">Our Story</span></a>
   				<ul class="subheading">
   					<li>
-                    	<a href="#">History</a>
+                    	<a href="history.html">History</a>
+                        <!--
                     	<a href="#">Our People</a>
                         <a href="#">Partners</a>
+                        -->
                     </li>
                 </ul>
   			</li>
   			<li>
-  				<a class="menu-heading" href="donate.html"><span class="menu-heading-text">Our Project</span></a>
+  				<a class="menu-heading" href="#"><span class="menu-heading-text">Our Project</span></a>
   				<ul class="subheading">
   					<li>
-                    	<a href="#">What we do</a>
-                    	<a href="#">Where we work</a>
-                        <a href="#">MHAs</a>
+                    	<a href="whatwedo.html">What we do</a>
+                    	<a href="wherewework.html">Where we work</a>
+                        <a href="mha.html">MHAs</a>
                     </li>
                 </ul>
   			</li>
-            <!--
-  			<li>
-  				<a class="menu-heading" href="#"><span class="menu-heading-text">Get Involved</span></a>
-  				<ul class="subheading">
-  					<li>
-                    	<a href="#">Donate</a>
-                    </li>
-                </ul>
-  			</li>
-            -->
   			<li>
   				<a class="menu-heading donate" href="donate.html"><span class="menu-heading-text">Donate</span></a>
   				<ul class="subheading donate">
   					<li>
-                    <a href="#">Learn about donations</a>
+                    <a href="donate.html">Learn about donations</a>
                     <div id="quick-donate">
                     <span>Donate Now</span>
-<form id="donation-form" class="donate-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<form id="quick-donate-form" class="donate-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
   <input type="hidden" name="cmd" value="_donations">
   <input type="hidden" name="upload" value="1">
   <input type="hidden" name="business" value="jambo@villagelifeoutreach.org">
@@ -85,7 +78,7 @@ $(document).ready(function(){
   <input type="hidden" name="item_name" value="Mama Miasha">
   <input type="hidden" name="no_shipping" value="1" />
   <input type="hidden" name="no_note" value="0" />
-  <input type="text" name="amount" value="$" size="5"/><!-- Use a comment to remove the line feed which causes a space between elements
+  <input type="text" name="amount" placeholder="$" size="5"/><!-- Use a comment to remove the line feed which causes a space between elements
   --><input name="donate" type="submit" id="Checkout" value="Submit">
 </form>
 					</div>
