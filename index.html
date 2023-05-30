@@ -1,233 +1,649 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Christie's MAR</title>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css" / />
+	<!-- Styles would normally go in a .css file but I put them all here to keep this to a single file (easier to copy to a new computer) -->
+	<style>
+		body,
+		html {
+			background-color: #ddd;
+			height: 100%;
+			width: 100%;
+			margin: 0;
+		}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		#login-form {
+			border: 1px solid gray;
+			width: 300px;
+			background-color: white;
+			left: 50%;
+			top: 50%;
+			position: absolute;
+			transform: translate(-50%, -60%);
+			padding: 40px;
+		}
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Lobster|Signika&display=swap" rel="stylesheet">
+		#login-form label {
+			width: 80px;
+			display: inline-block;
+			margin-bottom: 10px;
+		}
+
+		#login-button {
+			margin-top: 10px;
+		}
+
+		#mar-screen {
+			margin: 0 auto;
+			border: solid 1px black;
+			min-height: 500px;
+			background-color: white;
+			padding: 20px;
+			max-width: 1000px;
+		}
+
+		#med-table {
+			width: 100%;
+			text-align: left;
+		}
+
+		.med-button {
+			cursor: pointer;
+			margin-right: 15px;
+		}
+
+		.due .med-button:active {
+			background-color: #3e8e41;
+			box-shadow: 1px 1px #666;
+			transform: translate(1px, 1px);
+		}
+
+		.due .med-button {
+			background-color: #0ed70e;
+			color: white;
+		}
+
+		.due .med-button:hover {
+			background-color: #0eb10e;
+		}
+
+		.due::after {
+			content: "Due";
+			color: #0ed70e;
+			font-weight: bold;
+		}
+		
+		.due.prn .med-button {
+			background-color: #dddddd;
+			color: black;
+		}
+		
+		.due.prn .med-button:hover {
+			background-color: #efefef;
+		}
+
+		.due.prn::after {
+			content: "";
+		}
+
+		.held .med-button {
+			background-color: darkorange;
+			color: white;
+		}
+
+		.held::after {
+			content: "Held";
+			color: darkorange;
+			font-weight: bold;
+		}
+
+		.refused .med-button {
+			background-color: red;
+			color: white;
+		}
+
+		.refused::after {
+			content: "Refused";
+			color: red;
+			font-weight: bold;
+		}
+
+		.given::after {
+			content: "Given";
+			font-weight: bold;
+		}
+
+		.pull-right {
+			float: right;
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		#physician {
+			font-weight: normal;
+			margin: 0 0 10px 0;
+		}
+
+		#allergies {
+			margin-bottom: 10px;
+			display: inline-block;
+			font-size: 1.1em;
+			padding: 5px 5px 5px 0;
+		}
+
+		#allergies.active {
+			background-color: #75f575bf;
+		}
+
+		.patient-info {
+			font-size: 1.5em;
+			margin-bottom: 10px;
+		}
+
+		#patient-name {
+			display: inline;
+			background-color: #98f898;
+		}
+
+		.dob {
+			border-right: 1px solid gray;
+			margin-right: 10px;
+			border-left: 1px solid gray;
+			padding: 0 10px;
+		}
+
+		.med-action {
+			position: relative;
+		}
+
+		.action-chooser {
+			position: absolute;
+			background: #fbfbfb;
+			top: -20px;
+			z-index: 9;
+			cursor: pointer;
+		}
+
+		.shield {
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			background-color: #424242;
+			z-index: 8;
+			opacity: 0.1;
+		}
+
+		.action-chooser .action:hover {
+			background-color: #f1f393;
+		}
+
+		.note {
+			background-color: #ffff0085;
+			display: inline-block;
+			margin-top: 5px;
+		}
 
 
-    <link href='fullcalendar/core/main.css' rel='stylesheet' />
-    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
-    <link href='fullcalendar/timegrid/main.css' rel='stylesheet' />
-    <link href='fullcalendar/list/main.css' rel='stylesheet' />
+		.reason-input {
+			position: absolute;
+			background: #fbfbfb;
+			top: -20px;
+			z-index: 9;
+			border: 1px solid gray;
+			padding: 20px;
+			left: -60px;
+		}
 
+		.white-space-pre {
+			white-space: pre;
+		}
 
-    <title>Hello, world!</title>
+		#patient-picker {
+			margin-bottom: 20px;
+		}
+	</style>
 </head>
 
 <body>
-    <div class="container">
+	<!-- 
+		The css when the shield is visible makes it so you can't click anything below it.
+		This is used when the 'Given', 'Held', 'Refused' question and notes pop-up is displayed.
+	-->
+	<div class="shield hidden" id="shield"></div>
 
-        <header>
+	<!-- The login form. Change the class to "hidden" to remove it. -->
+	<div id="login-screen" class="hiddenx">
+		<div id="login-form">
+			<form id="login" onsubmit="login">
+				<div>
+					<label for="username">Username: </label><input name="username" />
+				</div>
+				<div>
+					<label for="password">Password: </label><input name="password" type="password" />
+				</div>
+				<div class="pull-right">
+					<button type="submit" id="login-button">Log in</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
-            <nav class="nav lobster-font">
-                <a class="nav-link active disabled" href="#">Home</a>
-                <a class="nav-link" id="menu-nav" href="#">Menu</a>
-                <a class="nav-link" id="find-us" href="#">Find Us</a>
-                <a class="nav-link" href="#">Photos</a>
-                <a class="nav-link" href="#">Contact</a>
-            </nav>
-        </header>
+	<!-- The main screen of the app. Remove the "hidden" class if you want to start with this displayed (without simulating a login). -->
+	<div id="mar-screen" class="hidden">
 
-        <div id="logo">
-            <img src="logo_crop.jpg" />
-        </div>
-    </div>
-    <div id="menu">
-        <div class="container">
-            <div class="row justify-content-md-center">
-                <div class="col-11">
+		<!-- The patient selection drop-down. This will be populated from the 'patients' data. -->
+		<div id="patient-picker" style="font-size: 2em">
+			<label for="patient-select">Select a patient</label>
+			<select id="patient-select" style="font-size: .8em"></select>
+		</div>
+		<hr style="margin: 15px -20px" />
 
-                    <div class="row col">
+		<!-- The section showing patient info and medications. It starts off hidden and will be displayed after a patient is selected. -->
+		<div id="chart" class="hidden">
+			<div id="patient">
+				<div class="patient-info">
+					<div id="patient-name"><strong>Resident: <span id="data-name">Lola Juarez</span></strong></div>
+					<span class="dob">Date of Birth: <span id="data-dob">02/14/1948</span></span>
+					<span class="room">Room: <span id="data-room">308 B</span></span>
+				</div>
+				<h2 id="physician"><strong>Physician:</strong> <span id="data-physician">Dr. Singh</span></h2>
+				<div id="allergies"><strong>Allergies:</strong> <span id="data-allergies">Penicillin, Latext</span>
+				</div>
+			</div>
+			<table id="med-table" border="1" cellspacing="0" cellpadding="5">
+				<thead>
+					<tr>
+						<th>Medication - Dose</th>
+						<th width="150">Time</th>
+						<th width="300">Notes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- The table details will be built by addMedRow() -->
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-                        <h1>Menu</h1>
+	<!-- 
+		This section is the basis for the "Given", "Held", "Refused" and the reason pop-up.
+		This sections stays hidden but we copy parts of it to add to the page when we need to show the pop-ups.
+	-->
+	<div id="action-template" class="hidden">
+		<div class="action-chooser">
+			<table border="1" cellspacing="0" cellpadding="10">
+				<tr>
+					<td class="action" data-action="given">Given</td>
+				</tr>
+				<tr>
+					<td class="action" data-action="held">Held</td>
+				</tr>
+				<tr>
+					<td class="action" data-action="refused">Refused</td>
+				</tr>
+				</tr>
+			</table>
+		</div>
+		<div class="reason-input">
+			<div>Enter a reason:</div>
+			<form>
+				<input name="reason" size="50" style="margin-bottom: 5px"></textarea>
+				<button type="submit" class="pull-right">Ok</button>
+			</form>
+		</div>
+	</div>
 
-                    </div>
-                    <div class="row">
+	<!-- Javascript usually goes in a separate .js file but I put it here to keep everything in one file. -->
+	<script>
+		/* Add the 'hidden' class to an element to hide it */
+		function hideElement(element) {
+			element.classList.add("hidden");
+		}
 
-                        <div class="col-5">
+		/* Remove the 'hidden' class from an element to show it */
+		function showElement(element) {
+			element.classList.remove("hidden");
+		}
 
-                            <h3>Coffee & Espresso Drinks</h3>
-                            <h6>Freshly Brewed Coffee</h6>
-                            <h6>Americano</h6>
-                        </div>
+		/**
+		 * Hide the login screen and show the MAR screen
+		 */
+		function login(event) {
+			// preventDefault stops the normal form submission
+			event.preventDefault();
+			hideElement(document.getElementById("login-screen"));
+			showElement(document.getElementById("mar-screen"));
+		}
 
-                        <div class="col-3">
-                            <h3>Frappes</h3>
-                            <h6>Coffee Frappe</h6>
-                        </div>
-                        <div class="col">
-                            <h3>Fresh Fruit Smoothies</h3>
-                            <h6>Strawbery</h6>
-                        </div>
+		/**
+		 * Build a new row in the med table for a medication.
+		 * 
+		 * The result will be adding a new <tr> to the table.
+		 * Example:
+			<tr>
+				<td>Omeprezole 20mg</td>
+				<td>
+					<div class="due">
+						<button class="med-button">14:00</button>
+					</div>
+				</td>
+				<td class="white-space-pre"></td>
+			</tr>
+		 * 
+		 * @param medication The medication details to add to the med table
+		 */
+		function addMedRow(medication) {
+			const medTable = document.querySelector("#med-table tbody");
+			if (medTable && medication) {
+				// Insert a row at the end of the table
+				let newRow = medTable.insertRow();
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
+				// Insert a cell in the row
+				let nameColumn = newRow.insertCell();
 
-        <div id="calendar" class="col-10 justify-content-md-center"></div>
-        
-        
-        <div id="instafeed"></div>
-    </div>
-    
+				// Append a text node to the cell
+				let nameText = document.createTextNode(medication.medication);
+				nameColumn.appendChild(nameText);
 
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+				if (medication.note) {
+					nameColumn.appendChild(document.createElement('br'));
+					let note = document.createElement("div");
+					note.classList.add('note');
+					note.innerHTML = "<strong>Note: </strong>" + medication.note;
+					nameColumn.appendChild(note);
+				}
 
-    <script src='fullcalendar/core/main.js'></script>
-    <script src='fullcalendar/daygrid/main.js'></script>
-    <script src='fullcalendar/timegrid/main.js'></script>
-    <script src='fullcalendar/list/main.js'></script>
+				// Insert the time column in the row
+				let timeColumn = newRow.insertCell();
 
-    <script src='fullcalendar/google-calendar/main.js'></script>
-    
-    <script type="text/javascript" src="instafeed/instafeed.min.js"></script>
+				// Create a div and button for the time due
+				let div = document.createElement("div");
+				div.classList.add('med-action');
 
-
-    <script>
-        // $('.google_cal').google_calendar_events({
-        //     key: 'AIzaSyDJKSVlqZmbNSxolPkXjFSPXS6X3aLrO5Q',
-        //     calendar: 'Food Truck'
-        // });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            
-            $('#find-us').click( function(event) {
-                event.preventDefault();
-                $('html,body').animate({scrollTop: $('#calendar').offset().top}, 600);
-            });
-            $('#menu-nav').click( function(event) {
-                event.preventDefault();
-                $('html,body').animate({scrollTop: $('#menu').offset().top}, 600);
-            });
-
-            
-            
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: ['interaction', 'dayGrid', 'timeGrid', 'googleCalendar', 'list'],
-                defaultView: 'timeGridWeek',
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
-                },
-                googleCalendarApiKey: 'AIzaSyDJKSVlqZmbNSxolPkXjFSPXS6X3aLrO5Q',
-                events: {
-                    googleCalendarId: '8dq2mc8qckjkg19jiljdvavpo4@group.calendar.google.com'
-                },
-                eventClick: function(info) {
-                    info.jsEvent.preventDefault();
-                    console.log(info);
-
-                    // change the border color just for fun
-                    info.el.style.borderColor = 'red';
-                },
-                nowIndicator: true,
-                minTime: "07:00:00",
-                maxTime: "17:00:00"
-            });
+				let button = document.createElement("button");
+				button.classList.add("med-button");
+				if(medication.timeDueOffsetInMinutes === 'PRN'){
+					button.appendChild(document.createTextNode('PRN'));
+					div.classList.add("due", "prn");
+					button.addEventListener("click", giveMed);
+				} else {
+					// Use the medication's timeDueOffsetInMinutes to calculate the actual time
+					const medTimeDue = parseMedTimeOffset(
+						medication.timeDueOffsetInMinutes
+					);
+					const timeDisplay = padWithLeadingZeros(medTimeDue.getHours()) + ":" + padWithLeadingZeros(medTimeDue.getMinutes());
+					button.appendChild(document.createTextNode(timeDisplay));
+					
+					// Add a class and click logic if the time if before now (the medication is due)
+					if (medTimeDue < new Date()) {
+						div.classList.add("due");
+						button.addEventListener("click", giveMed);
+					}
+				}
 
 
-            calendar.render();
-            
-        });
-        
-        
-        
-        
-        
-        var token = '1709403351.c8e193f.ea1384a517a3491abb02110038cfa8b3',
-        userId = '1709403351',
-        detourcoffeebarId = '11788553606',
-    username = 'crbentle', // rudrastyh - my username :)
-    num_photos = 4;
- 
-    var feed = new Instafeed({
-           get: 'user',
-           userId: userId,
-           accessToken: token,          
-           resolution: 'low_resolution',
-           template: '<a style="padding: 10px; display: inline-block;" href="{{link}}"><img src="{{image}}" /></a>'
-           /*
-           <div data-ng-repeat="media in row" data-ng-mouseenter="events.toggleVideoPlay(media.type, media.id)" class="imgContainer normal" data-ng-click="events.openExpandMode(media.id)" data-ng-class="{'video': media.type == 'video', 'carousel': media.type == 'carousel', 'disabled': !settings.popup_display, 'previewMode': previewModeToggled}">
-           
-                         <!-- ngIf: media.type !== 'video' --><img data-ng-if="media.type !== 'video'" data-ng-src="https://scontent.cdninstagram.com/vp/9ddcfc058d0a1cdedd7368b741c787eb/5DB5FDBA/t51.2885-15/sh0.08/e35/s640x640/67098820_147973652933856_4449044453946843953_n.jpg?_nc_ht=scontent.cdninstagram.com" id="c-2091555891269743750_275759697" data-ng-class="{'horizontal': isHorizontal(media.images.standard_resolution, media.id)}" data-img-fade-in="" class="ng-scope" src="https://scontent.cdninstagram.com/vp/9ddcfc058d0a1cdedd7368b741c787eb/5DB5FDBA/t51.2885-15/sh0.08/e35/s640x640/67098820_147973652933856_4449044453946843953_n.jpg?_nc_ht=scontent.cdninstagram.com"><!-- end ngIf: media.type !== 'video' -->
-                          <!-- ngIf: media.type === 'video' -->
-           
-                         <div class="icons-wrapper">
-                             <!-- ngIf: media.type === 'video' || media.type == 'carousel' -->
-                             <span data-ng-class="{
-                               'icon_link': mediaLinksMap.get(media.id) &amp;&amp; mediaLinksMap.get(media.id).isProduct === false &amp;&amp; mediaLinksMap.get(media.id).isLink === true, 
-                               'icon_cart': mediaLinksMap.get(media.id) &amp;&amp; mediaLinksMap.get(media.id).isProduct === true,
-                               'no_image': media.type == 'video' || media.type == 'carousel'}"></span>
-                           </div>
-           
-                         <div class="imageLikesComments" data-ng-class="{'purchase-icon': smallPurchaseBtn &amp;&amp; hasCurrentMediaProductLinks(media), 'has-product-links': hasCurrentMediaProductLinks(media)}">
-                           <div class="post-info">
-                               <!-- ngIf: media.caption && media.caption.text --><div class="caption ng-scope captionVisible" data-ng-if="media.caption &amp;&amp; media.caption.text" data-ng-class="{'captionVisible': settings.settings_caption_toggle, 'only-caption': !settings.settings_like_comments_toggle}">
-                                   <p class="ng-binding">Looking to reward your team with some free and made-on-site caffeine? We cater all size groups - from 20 to 200. Contact us today for pricing!
-           
-           #sandiegocoffee, #sandiegocoffeenetwork, #sandiegocoffeeshop, #sandiegocoffeeshops,
-           #sandiegocoffeeroasters, #sdcoffee, #mobilecoffeebar, #cateringservice, #catering, #eventcatering</p>
-                                 </div><!-- end ngIf: media.caption && media.caption.text -->
-                                 <div class="wrap imageShowHoverData" data-ng-class="{'imageShowHoverData': settings.settings_like_comments_toggle }">
-                                   <div class="social-info">
-                                       <div class="likes">
-                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="21" viewBox="0 0 24 21">
-                                           <path fill="none" stroke="#FFF" stroke-width="1.2" d="M21.8276508,5.60736573 C21.2631897,2.50906974 18.4408838,-0.189446119 15.4304243,0.0104439445 C13.8311176,0.110388976 11.8555036,1.20978433 10.9147349,2.70895981 C10.0680432,1.20978433 8.09242911,0.110388976 6.49312248,0.0104439445 C3.48266293,-0.189446119 0.660357096,2.50906974 0.0958959296,5.60736573 C-0.280411514,8.00604649 0.472203374,10.5046723 1.97743315,12.3036829 C2.73004804,13.2031882 3.76489351,13.9028034 4.70566212,14.6024186 C5.83458445,15.4019789 6.96350678,16.2015391 7.99835225,17.0010994 C8.845044,17.6007696 9.69173575,18.2004397 10.5384275,18.8001099 C10.7265812,18.900055 10.8206581,19 10.9147349,19 C11.0088118,19 11.1028887,18.900055 11.2910424,18.8001099 C12.1377341,18.2004397 12.9844259,17.6007696 13.8311176,17.0010994 C14.96004,16.2015391 16.0889623,15.4019789 17.1238078,14.6024186 C18.0645764,13.9028034 19.0994218,13.2031882 19.8520367,12.3036829 C21.4513434,10.5046723 22.2039583,7.90610146 21.8276508,5.60736573" transform="translate(1 1)"></path>
-                                         </svg>
-                                       </div>
-                                       <div class="ng-binding">33</div>
-                                       <div class="comments">
-                                           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="19" viewBox="0 0 22 19"><path fill="none" stroke="#FFF" d="M112.073042,1980.38297 C111.483351,1976.40391 114.549134,1972.9934 118.204428,1971.62917 C122.331367,1970.15111 127.165683,1971.28806 129.523908,1974.92603 C131.174576,1977.42704 131.410489,1980.95136 130.11342,1983.67983 C130.702931,1985.15771 131.37114,1986.50913 132,1988 C130.032207,1987.50489 128.880683,1986.6909 127.269364,1986.31099 C121.28483,1989.33369 113.016332,1987.3178 112.073042,1980.38297 Z" transform="translate(-111 -1970)"></path></svg>    
-                                       </div>
-                                       <div class="ng-binding">0</div>
-                                   </div>
-                                 </div>
-                           </div>
-                           <div class="product_wrap ng-hide" data-ng-show="mediaLinksMap.has(media.id) &amp;&amp; mediaLinksMap.get(media.id).hasLinks &amp;&amp; mediaLinksMap.get(media.id).isProduct === true">
-                               <button class="button_text ng-binding"></button>
-                           </div>
-                         </div>
-                     </div>
-           */
-       });
-       feed.run();
-       
-  
-  // https://codelike.pro/fetch-instagram-posts-from-profile-without-__a-parameter/
-       // $.ajax({
-       //     url: "https://www.instagram.com/crbentle/",
-       //     success: function(result) {
-       //         var jsonObject = result.data.match(/<script type="text\/javascript">window\._sharedData = (.*)<\/script>/)[1].slice(0, -1);
-       //             console.log(jsonObject);
-       //     }
-       // }
-       //
-       //)
-        
-    </script>
+				
 
+
+				div.appendChild(button);
+
+				timeColumn.appendChild(div);
+
+				// Create the Note column
+				let noteCol = newRow.insertCell();
+				noteCol.classList.add('white-space-pre');
+			}
+		}
+
+		/**
+		 * Get the nearest hour to 'now' and add or subtract the medication offset to get the medication time.
+		 */
+		function parseMedTimeOffset(medicationTimeOffsetInMinutes) {
+			// Get the current time and reset minutes, seconds, and milliseconds to get the last hour. Example: 14:23 becaomse 14:00
+			let currentHour = new Date();
+			currentHour.setMinutes(0);
+			currentHour.setSeconds(0);
+			currentHour.setMilliseconds(0);
+
+			/* (medicationTimeOffsetInMinutes || 0)
+			 * This is a safeguard in case the offset is not defined. If that happens, we'll use '0' as the offset. 
+			 */
+
+			// Multiply the offset by 1000 milliseconds per second and 60 seconds per minute
+			return new Date(
+				currentHour.getTime() + (medicationTimeOffsetInMinutes || 0) * 1000 * 60
+			);
+		}
+
+		/**
+		 * Pad single digit numbers with a leading zero. Example: '1' becomes '01'.
+		 * 
+		 * We're doing this by prepending '00' to the original number and then taking the last two 
+		 * characters of the new value. '1' -> '001' -> '01'
+		 */
+		function padWithLeadingZeros(value) {
+			return ("00" + value).slice(-2);
+		}
+
+
+		/**
+		 * Remove the 'due' class and add the 'given' class when a med time button is clicked.
+		 * Note: This function got more complicated when adding the Hold, Refused, and reason bits and I got lazy and didn't comment it well
+		 */
+		function giveMed(event) {
+			const button = event.target;
+
+			/**
+			 * 'event' tells us the button that was clicked but the 'due' class is on the div surrounding the button.
+			 * Find the div and add/remove classes on it.
+			 */
+			const parentDiv = button.closest(".due");
+			if (parentDiv) {
+
+				const actionOverlayTemplate = document.querySelector('#action-template .action-chooser');
+				const overlayClone = actionOverlayTemplate.cloneNode(true);
+				parentDiv.appendChild(overlayClone);
+
+				const shield = document.getElementById('shield');
+				shield.classList.remove('hidden');
+
+				overlayClone.addEventListener('click', function (event) {
+					const target = event.target;
+					const choice = target.dataset.action;
+
+					if (choice === 'given') {
+						parentDiv.classList.add("given");
+						parentDiv.classList.remove("due", "prn");
+						shield.classList.add('hidden');
+					} else {
+						parentDiv.classList.add(choice);
+						parentDiv.classList.remove("due", "prn");
+
+						const reasonInputTemplate = document.querySelector('#action-template .reason-input');
+						const reasonClone = reasonInputTemplate.cloneNode(true);
+						const reasonForm = reasonClone.querySelector('form');
+
+						reasonForm.addEventListener('submit', function (event) {
+							event.preventDefault();
+							this.closest('tr').querySelector('td:last-child').innerHTML = this.reason.value;
+							reasonClone.remove();
+							shield.classList.add('hidden');
+						})
+
+						parentDiv.appendChild(reasonClone);
+						reasonForm.reason.focus();
+
+					}
+					this.remove();
+
+				})
+
+			}
+		}
+
+		/**
+		 * Loop through the medData and add a new row to the MAR table for each medication.
+		 */
+		function loadMedData(medData) {
+			document.querySelector("#med-table tbody").innerHTML = '';
+			medData.forEach(function (medication) {
+				addMedRow(medication);
+			});
+		}
+
+		/**
+		 * Reset the display with new patient details
+		 */
+		function loadPatient(patient) {
+			if (!patient) {
+				document.getElementById('chart').classList.add('hidden');
+				return;
+			}
+
+			document.getElementById('chart').classList.remove('hidden');
+			document.getElementById('data-name').innerHTML = patient.name;
+			document.getElementById('data-dob').innerHTML = patient.dob;
+			document.getElementById('data-room').innerHTML = patient.room;
+			document.getElementById('data-physician').innerHTML = patient.physician;
+			document.getElementById('data-allergies').innerHTML = patient.allergies;
+
+			document.getElementById('allergies').classList.remove('active');
+			if (patient.allergies) {
+				document.getElementById('allergies').classList.add('active');
+			}
+
+			loadMedData(patient.medications);
+		}
+
+		/**
+		 * Loop through the patients object and build the patient selection list
+		 */
+		function createPatientSelect() {
+			const patientSelect = document.getElementById('patient-select');
+
+			let html = '<option value=""></option>';
+			for (patient of patients) {
+				html += `<option value=${patient.id}>${patient.name} - ${patient.dob}</option>`;
+			}
+
+			patientSelect.innerHTML = html;
+
+			// Load the patient's details when a patient is selected
+			patientSelect.addEventListener('change', function (event) {
+				const selectedValue = this.value;
+				const patient = patients.find(patient => patient.id === Number(selectedValue));
+				loadPatient(patient);
+			})
+		}
+
+		/**
+		 * This function is executed when the page finishes loading.
+		 */
+		window.addEventListener("DOMContentLoaded", (event) => {
+			createPatientSelect();
+
+			// Call the login() function when the login form is submitted
+			const form = document.getElementById("login");
+			form.addEventListener("submit", login);
+
+		});
+
+		/**
+		 * Each patient must have a unique id.
+		 * Medication: Set offset as negative for a time in the past, positive for the future.
+		 */
+		const patients = [{
+			id: 1,
+			name: 'Lola Juarez',
+			dob: '02/14/1948',
+			room: '308 B',
+			physician: 'Dr. Singh',
+			allergies: 'Penicillin, Latext',
+			medications: [
+				{
+					medication: "Omprezole - 20 mg",
+					timeDueOffsetInMinutes: -30,
+				},
+				{
+					medication: "med2",
+					note: "Hold for HR < 60 bpm",
+					timeDueOffsetInMinutes: 90
+				},
+				{
+					medication: "med3",
+					timeDueOffsetInMinutes: -60,
+				},
+				{
+					medication: "med4",
+					timeDueOffsetInMinutes: 0,
+				},
+			]
+		},
+		{
+			id: 2,
+			name: 'Norman Edwards',
+			dob: '08/07/1975',
+			room: '315',
+			physician: 'Dr. Vanwoert',
+			allergies: '',
+			medications: [{
+				medication: 'Abapanos',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Abarosan',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Retat',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Ripnis',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Roloda',
+				timeDueOffsetInMinutes: 0
+			}]
+		},
+		{
+			id: 3,
+			name: 'Nina Silva',
+			dob: '01/04/1955',
+			room: '302',
+			physician: 'Dr. Lala',
+			allergies: '',
+			medications: [{
+				medication: 'Izernar',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Lerof',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Nefvix',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Nunef',
+				timeDueOffsetInMinutes: 0
+			},
+			{
+				medication: 'Orexmip',
+				timeDueOffsetInMinutes: 'PRN'
+			}]
+		}
+		];
+
+	</script>
 </body>
 
 </html>
