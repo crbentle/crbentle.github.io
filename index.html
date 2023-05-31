@@ -76,7 +76,7 @@
 			color: #0ed70e;
 			font-weight: bold;
 		}
-		
+
 		.due.prn .med-button {
 			background-color: #dddddd;
 			color: black;
@@ -189,6 +189,25 @@
 			margin-top: 5px;
 		}
 
+		.col-notes {
+			padding: 3px;
+    		height: 20px;
+		}
+
+		.col-notes > div {
+			width: 100%;
+    		height: 100%;
+    		position: relative;
+		}
+
+		.col-notes textarea {
+			resize: none;
+			outline: none;
+			width: 100%;
+			padding: 0;
+			border: none;
+			height: 100%;
+		}
 
 		.reason-input {
 			position: absolute;
@@ -368,8 +387,8 @@
 
 				let button = document.createElement("button");
 				button.classList.add("med-button");
-				if(medication.timeDueOffsetInMinutes === 'PRN'){
-					button.appendChild(document.createTextNode('PRN'));
+				if (typeof medication.timeDueOffsetInMinutes === 'string' || medication.timeDueOffsetInMinutes instanceof String){
+					button.appendChild(document.createTextNode(medication.timeDueOffsetInMinutes));
 					div.classList.add("due", "prn");
 					button.addEventListener("click", giveMed);
 				} else {
@@ -387,17 +406,17 @@
 					}
 				}
 
-
-				
-
-
 				div.appendChild(button);
 
 				timeColumn.appendChild(div);
 
 				// Create the Note column
 				let noteCol = newRow.insertCell();
-				noteCol.classList.add('white-space-pre');
+				noteCol.classList.add('white-space-pre', 'col-notes');
+				let noteDiv = document.createElement("div");
+				noteCol.appendChild(noteDiv);
+				let textarea = document.createElement("textarea");
+				noteDiv.append(textarea);
 			}
 		}
 
@@ -448,6 +467,7 @@
 
 				const actionOverlayTemplate = document.querySelector('#action-template .action-chooser');
 				const overlayClone = actionOverlayTemplate.cloneNode(true);
+				overlayClone.classList.add('active');
 				parentDiv.appendChild(overlayClone);
 
 				const shield = document.getElementById('shield');
@@ -471,7 +491,9 @@
 
 						reasonForm.addEventListener('submit', function (event) {
 							event.preventDefault();
-							this.closest('tr').querySelector('td:last-child').innerHTML = this.reason.value;
+							let textarea = this.closest('tr').querySelector('td:last-child textarea');
+							textarea.value = textarea.value + (textarea.value ? ' ' : '') + this.reason.value;
+							textarea.style.height = textarea.scrollHeight+'px';
 							reasonClone.remove();
 							shield.classList.add('hidden');
 						})
@@ -552,6 +574,15 @@
 			const form = document.getElementById("login");
 			form.addEventListener("submit", login);
 
+			// Close the action chooser and hide the shield overlay when the sheild is clicked
+			document.getElementById('shield').addEventListener("click", function() {
+				let actionChooser = document.querySelector(".action-chooser.active");
+				if(actionChooser){
+					actionChooser.remove();
+					document.getElementById('shield').classList.add('hidden');
+				}
+			});
+
 		});
 
 		/**
@@ -564,81 +595,190 @@
 			dob: '02/14/1948',
 			room: '308 B',
 			physician: 'Dr. Singh',
-			allergies: 'Penicillin, Latext',
+			allergies: 'Penicillin, Latex',
 			medications: [
 				{
-					medication: "Omprezole - 20 mg",
-					timeDueOffsetInMinutes: -30,
-				},
-				{
-					medication: "med2",
-					note: "Hold for HR < 60 bpm",
-					timeDueOffsetInMinutes: 90
-				},
-				{
-					medication: "med3",
-					timeDueOffsetInMinutes: -60,
-				},
-				{
-					medication: "med4",
+					medication: "Fluticasone Furonate 27.5 mcg/spray - take two sprays each nostril daily",
 					timeDueOffsetInMinutes: 0,
 				},
-			]
+				{
+					medication: "Metoprolol Tartrate - 50 mg tablet - take 1/2 tablet daily by mouth",
+					note: "Hold for HR < 60 bpm",
+					timeDueOffsetInMinutes: 0,
+				},
+				{
+					medication: "Multivitamin - take one tablet by mouth daily",
+					timeDueOffsetInMinutes: 0,
+				},
+				{
+					medication: "Rivastigmine Transdermal System 9.5 mg/24 hr - apply once daily",
+					note: "Document Site",
+					timeDueOffsetInMinutes: 0,
+				},
+				{
+					medication: "Citalopram HBR - 20 mg tablet - take one tablet my mouth daily",
+					timeDueOffsetInMinutes: +60,
+				},
+				{
+					medication: "Oxycodone HCL - 5 mg tablet - take two tablets my mouth every 6 hours as needed for pain",
+					note: "PRN - Document pain level and site",
+					timeDueOffsetInMinutes: "PRN",
+				},]
 		},
 		{
 			id: 2,
-			name: 'Norman Edwards',
+			name: 'John Schmidt',
 			dob: '08/07/1975',
 			room: '315',
-			physician: 'Dr. Vanwoert',
-			allergies: '',
+			physician: 'Dr. Jones',
+			allergies: 'PCN',
 			medications: [{
-				medication: 'Abapanos',
+				medication: 'Ferrous Sulfate - 325mg tablet - take 1 tablet by mouth every other day',
+				note: "Last dose yesterday",
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Vitamin C - 500 mg tablet - take one tablet by mouth every other day with Ferrous Sulfate',
+				note: "Last dose yesterday",
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Citalopram HBR 10 mg tablet - take one tablet by mouth once daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Aspirin 81 mg tablet - take one tablet by mouth daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Namzaric 28 mg-10 mg capsule - take one capsule by mouth once daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Tylenol Arthritis ER 650 mg tablet - take one tablet by mouth three times daily',
+				timeDueOffsetInMinutes: +90,
+			},
+			{
+				medication: 'Macrobid 100 mg capsule - take one capsule by mouth twice daily',
 				timeDueOffsetInMinutes: 0
 			},
 			{
-				medication: 'Abarosan',
-				timeDueOffsetInMinutes: 0
+				medication: 'Latanoprost 0.005% eye drops - instill one drop in each eye once daily',
+				timeDueOffsetInMinutes: 0,
 			},
 			{
-				medication: 'Retat',
-				timeDueOffsetInMinutes: 0
+				medication: 'Vitamin D3 5000 IU - take one capsule by mouth once daily',
+				timeDueOffsetInMinutes: 0,
 			},
 			{
-				medication: 'Ripnis',
-				timeDueOffsetInMinutes: 0
-			},
-			{
-				medication: 'Roloda',
-				timeDueOffsetInMinutes: 0
-			}]
+				medication: 'Artificial Tears - instill 2 drops in affected eye every 15 minutes as needed for dry eye',
+				timeDueOffsetInMinutes: "PRN",
+				note: "PRN",
+
+			},]
 		},
 		{
 			id: 3,
-			name: 'Nina Silva',
-			dob: '01/04/1955',
-			room: '302',
-			physician: 'Dr. Lala',
-			allergies: '',
+			name: 'Aretha Jones',
+			dob: '07/22/1923',
+			room: '602',
+			physician: 'Dr. Mandalorian',
+			allergies: 'Tetracycline',
 			medications: [{
-				medication: 'Izernar',
+				medication: 'Liquid tears - 2 drops in each eye twice daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Nitrogard extended release buccal 1 mg tablets. Take one tablet every 5 hours',
+				note: "hold for pulse less than 60",
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Miconazole suppository 300 mg per vagina at bedtime for 7 days',
+				timeDueOffsetInMinutes: +480,
+			},
+			{
+				medication: 'PractiKefx 500 mg (use for Keflex) - give two 250 mg tablets by mouth four times per day',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Metamucil 1 pkg mixed with a full glass or water or juice by mouth daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{	medication: 'Practi-Val (Use for Valium) 5 mg by mouth twice per day',
+				note: "crush pill and mix with applesauce",
+				timeDueOffsetInMinutes: 0,
+			 },
+			{	medication: 'Pseudo-Auralgan - instill three drops into left ear twice daily',
+				timeDueOffsetInMinutes: 0,
+			},
+			{
+				medication: 'Premarin 0.3 mg - one tablet by mouth daily',
+				timeDueOffsetInMinutes: -180,
+			},
+			{
+				medication: 'Acetaminophen Liquid - 500mg/15ml PO every 4 hours as needed for temp greater than 100 degrees',
+				note: "PRN",
+				timeDueOffsetInMinutes: "PRN",
+			},
+			{
+				medication: 'Phenergan Suppository 25 mg per rectum every 4 hours as needed for nausea',
+				note: "PRN",
+				timeDueOffsetInMinutes: "PRN",
+
+			},]
+		},
+		{
+			id: 4,
+			name: 'Jack Workman',
+			dob: '04/01/1950',
+			room: 'GH-2',
+			physician: 'Dr. Mandalorian',
+			allergies: 'tetracycline',
+			medications: [{
+				medication: 'Practi-mic-K (use for potassium cloride) 8 mEq/1 tablet - give 1 tablet by mouth three times daily' ,
+				note: "DO NOT CRUSH",
+				timeDueOffsetInMinutes: -60
+			},
+			{
+				medication: 'Practi-Digox (use for Digoxin) 0.25 mg tablet - give 1/2 tablet (0.125 mg) by mouth once daily',
+				note: "Hold for pulse less than 60",
 				timeDueOffsetInMinutes: 0
 			},
 			{
-				medication: 'Lerof',
+				medication: 'Vaseline ointment to right forearm four times per day',
 				timeDueOffsetInMinutes: 0
 			},
 			{
-				medication: 'Nefvix',
+				medication: 'Advair Diskus (fluticasone propionate 250 mcg and salmeterol 50 mcg) powder - inhaled twice daily ',
+				note: "Rinse and Spit",
 				timeDueOffsetInMinutes: 0
 			},
 			{
-				medication: 'Nunef',
+				medication: 'Terbinafine 1% cream (use for lamisil) - apply between toes twice daily ',
+				timeDueOffsetInMinutes: +60
+			},
+			{	
+				medication: 'Nitro-Dur 0.4 mg transdermal Patch - apply to skin one time daily',
 				timeDueOffsetInMinutes: 0
 			},
 			{
-				medication: 'Orexmip',
-				timeDueOffsetInMinutes: 'PRN'
+				medication: 'Remove Nitro-Dur Transdermal Patch at bedtime',
+				timeDueOffsetInMinutes:  +480
+			},
+			{
+				medication: 'Nitroglycerin Paste - 1 inch applied transdermally to chest - apply to skin once daily',
+				timeDueOffsetInMinutes: -120
+			},
+			{
+				medication: 'Remove Nitroglycerine Paste at bedtime ',
+				timeDueOffsetInMinutes: +480
+			},
+			{	
+				medication: 'Nitroglycerin 0.15 mg Sublingual (SL) - one tablet every 5 minutes up to a maximum of 3 tablets as needed for chest pain',
+				note: "PRN",
+				timeDueOffsetInMinutes: "PRN"
+
 			}]
 		}
 		];
